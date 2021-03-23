@@ -5,6 +5,7 @@ Flutter app to view astronomy picture of the selected date.
 ## Features
 - View astronomy picture of the day
 - Date picker for selecting date
+- MVVM architecture using Stacked package
 
 ## Links for demo
 - Desktop: https://drive.google.com/file/d/1ee4LbEpXsCb166XicTh_643oC-rwMII4/view?usp=sharing
