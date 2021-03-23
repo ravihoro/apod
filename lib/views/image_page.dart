@@ -1,27 +1,42 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../model/image_model.dart';
+import 'package:stacked/stacked.dart';
+import 'package:apod/views/home_viewmodel.dart';
 import '../model/image_data.dart';
-//import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import '../enums/viewstate.dart';
 
-class ImagePage extends StatelessWidget {
+class ImagePage extends ViewModelWidget<HomeViewModel> {
+  const ImagePage({Key key}) : super(key: key, reactive: true);
+
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ImageModel>(builder: (context, imageModel, child) {
-      return imageModel.image == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _image(imageModel.image, context),
-                  _imageDescription(imageModel.image),
-                ],
-              ),
-            );
-    });
+  Widget build(BuildContext context, HomeViewModel model) {
+    return model.state == ViewState.Loading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : model.imageData == null
+            ? _errorFetchingImage()
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _image(model.imageData, context),
+                    _imageDescription(model.imageData),
+                  ],
+                ),
+              );
+  }
+
+  Widget _errorFetchingImage() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.error),
+        SizedBox(
+          height: 5.0,
+        ),
+        Text('Unable to fetch image'),
+      ],
+    );
   }
 
   Widget _image(ImageData imageData, BuildContext context) {
@@ -48,6 +63,7 @@ class ImagePage extends StatelessWidget {
           child: Image.network(
             imageData.url,
             errorBuilder: (context, exception, stackTrace) {
+              print(exception);
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
